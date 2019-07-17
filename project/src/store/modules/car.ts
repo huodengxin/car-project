@@ -22,7 +22,7 @@ function sortNumber(a: any, b: any): number {
 function numberSort(a: any, b: any): number {
     return a.slice(5, 8) - b.slice(5, 8)
 }
-function titleFn(arr: any): Array<Object> {
+function titleFn(arr: any): any {
     let titleList: any = [];
     let data: any = [];
     let list: any = []
@@ -52,24 +52,21 @@ const state = {
     newList: [] = [],
     titleList: [] = []
 }
-const actions = {
-    carActions({ commit }: { commit: Function }, payLoad: string) {
-        carFn(payLoad).then((res: any) => {
-            commit("carMutations", res.data)
-        })
+const actions={
+    async carActions({commit}:{commit:Function},payLoad:string){
+        let res:any=await carFn(payLoad)
+        state.obj=res.data;
+        state.yearArr=arrFn(res.data.list);
+        state.list=res.data.list;
+        state.newList=titleFn(res.data.list);
+        state.dealer_price=res.data.market_attribute.dealer_price;
+        state.official_refer_price=res.data.market_attribute.official_refer_price;
+        return res
     }
 }
-const mutations = {
-    carMutations(state: any, obj: any) {
-        state.obj = obj;
-        state.yearArr = arrFn(obj.list);
-        state.list = obj.list;
-        state.newList = titleFn(obj.list);
-        state.dealer_price = obj.market_attribute.dealer_price;
-        state.official_refer_price = obj.market_attribute.official_refer_price;
-    },
-    changeYear(state: any, item: string) {
-        state.newList = titleFn(listArr(state.list, item))
+const mutations={
+    changeYear(state: any,item:string){
+        state.newList=titleFn(listArr(state.list,item))
     }
 }
 export default {

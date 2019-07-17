@@ -5,6 +5,8 @@ const Car = () =>import('../views/Car.vue')
 const Quotation = () =>import('../views/Quotation.vue')
 const MyImg = () =>import('../views/myImg.vue')
 const MyColor=()=>import('../views/myColor.vue')
+const Type= () =>import('../views/Type.vue')
+
 Vue.use(Router)
 export default new Router({
   mode: 'history',
@@ -30,6 +32,10 @@ export default new Router({
       path:'/myColor',
       name:'myColor',
       component:MyColor
+    },{
+      path:'/type',
+      name:'type',
+      component:Type
     }
   ]
 })
