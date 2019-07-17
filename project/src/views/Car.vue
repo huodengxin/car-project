@@ -10,7 +10,7 @@
           <p class="money">{{dealer_price}}</p>
           <p class="price">指导价 {{official_refer_price}}</p>
         </div>
-        <div class="right" @click='jump'>询问底价</div>
+        <div class="right" @click="jump">询问底价</div>
       </div>
       <div class="car-list">
         <classifyYear/>
@@ -18,7 +18,7 @@
       </div>
     </div>
     <div class="footer">
-      <p @click='jump'>询问底价</p>
+      <p @click="jump">询问底价</p>
       <p>本地经销商为你报价</p>
     </div>
   </div>
@@ -46,18 +46,20 @@ export default {
   methods: {
     ...mapActions({
       carActions: "car/carActions",
-      cityActions:'quotation/cityActions'
+      cityActions: "quotation/cityActions",
+      imgActions: "myImg/imgActions"
     }),
-    jump(){
-      this.$router.push({name:'quotation'})
+    jump() {
+      this.$router.push({ name: "quotation" });
     },
-    gotoImg(SerialID){
-      this.$router.push({name:'MyImg',params:{SerialID}})
+    gotoImg(SerialID) {
+      this.$router.push({ name: "MyImg", params: { SerialID } });
+      this.imgActions(SerialID);
     }
   },
   created() {
     this.carActions(this.$route.params.id);
-    this.cityActions()
+    this.cityActions();
   },
   mounted() {}
 };
@@ -101,11 +103,11 @@ export default {
       box-sizing: border-box;
       .left {
         .money {
-          font-size: .32rem;
+          font-size: 0.32rem;
           color: #f00;
         }
         .price {
-          font-size: .26rem;
+          font-size: 0.26rem;
           color: silver;
         }
       }
