@@ -21,26 +21,32 @@
       <p @click='jump'>询问底价</p>
       <p>本地经销商为你报价</p>
     </div>
+    <Loading v-show="isLoading"/>
   </div>
 </template>
 <script>
 import { mapState, mapActions } from "vuex";
 import classifyYear from "@/components/classifyYear";
 import classifyList from "@/components/classifyList";
+import Loading from '@/components/Loading'
 export default {
   props: {},
   components: {
     classifyYear,
-    classifyList
+    classifyList,
+    Loading
   },
   data() {
-    return {};
+    return {
+      isLoading: true
+    };
   },
   computed: {
     ...mapState({
-      obj: state => state.car.obj,
-      dealer_price: state => state.car.dealer_price,
-      official_refer_price: state => state.car.official_refer_price
+        obj: state => state.car.obj,
+        dealer_price: state => state.car.dealer_price,
+        official_refer_price: state => state.car.official_refer_price,
+        newList: state => state.car.newList
     })
   },
   methods: {
@@ -49,15 +55,19 @@ export default {
       cityActions:'quotation/cityActions'
     }),
     jump(){
-      this.$router.push({name:'quotation'})
+       localStorage.setItem('carId',this.newList[0].list[0].car_id)
+      this.$router.push({name:'quotation',params:{carId:this.newList[0].list[0].car_id}})
     },
     gotoImg(SerialID){
       this.$router.push({name:'MyImg',params:{SerialID}})
     }
   },
-  created() {
-    this.carActions(this.$route.params.id);
-    this.cityActions()
+  async created() {
+    let data=await this.carActions(this.$route.params.id);
+    if(data.code==1){
+      this.isLoading=false;
+      this.cityActions()
+    }
   },
   mounted() {}
 };

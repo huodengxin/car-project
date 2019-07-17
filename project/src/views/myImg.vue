@@ -90,8 +90,9 @@ export default {
                 height: 123px;
                 width: 33%;
                 img{
-                    width: 100%;
-                    height: 100%;
+                    width:100%;
+                    height:100%;
+                    background-size:cover
                 }
             }
         }

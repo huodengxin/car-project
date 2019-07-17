@@ -3,7 +3,7 @@
         <p ref='header'>可向多个商家咨询最低价，商家及时回复<img src="http://h5.chelun.com/2017/official/img/icon-help.png" alt=""></p>
         <main class="quotationMain" ref='main'>
           <div v-for="(item, index) in quotationData" :key="index">
-            <dl>
+            <dl @click='jumpType'>
                 <dt>
                     <img :src="item.details.serial.Picture" alt="">
                 </dt>
@@ -47,25 +47,29 @@
         </footer>
         <my-City v-show="addressFlag" :addressArr='addressList' :carId='$route.query.carId'/>
         <my-Mask v-show="showMask" @emitMack='emitshowMask'/>
+        <Loading v-show="isLoading"/>
     </div>
 </template>
 <script>
 import myMask from '../components/Mask'
 import myCity from '../components/City'
 import QuotationList from '../components/QuotationList'
+import Loading from '@/components/Loading'
 import {mapActions,mapState,mapMutations} from 'vuex'
 export default {
     data(){
         return {
             flag:false,
             showMask:false,
-            addressFlag:false
+            addressFlag:false,
+            isLoading: true
         }
     },
     components:{
         myMask,
         QuotationList,
-        myCity
+        myCity,
+        Loading
     },
     computed:{
         ...mapState({
@@ -75,25 +79,28 @@ export default {
             CityName:state=>state.quotation.CityName
         })
     },
-    created(){
-        this.dataActions({
-            carId:this.$route.params.carId,
+    async created(){
+        let data=await this.dataActions({
+            carId:localStorage.getItem('carId'),
             cityId:this.cityId,
             _1563275336259:null
-        }),
-        this.addressActions(),
-        this.$bus.$on('getAddressFn',(CityID,CityName)=>{
-            this.addressFlag=false
-            this.cityMu({
-                CityID:CityID,
-                CityName:CityName
-            })
-            this.dataActions({
-                carId:this.$route.params.carId,
-                cityId:CityID,
-                _1563275336259:null
-            })
         })
+         if(data.code==1){
+            this.isLoading=false;
+            this.addressActions();
+            this.$bus.$on('getAddressFn',(CityID,CityName)=>{
+                this.addressFlag=false
+                this.cityMu({
+                    CityID:CityID,
+                    CityName:CityName
+                })
+                this.dataActions({
+                    carId:localStorage.getItem('carId'),
+                    cityId:CityID,
+                    _1563275336259:null
+                })
+            })
+         }
     },
     mounted(){
         this.$refs.main.addEventListener('scroll', this.handleScroll)
@@ -107,7 +114,7 @@ export default {
             cityMu:'quotation/cityMu'
         }),
         handleScroll () {
-             var scrollTop = this.$refs.main.scrollTop;
+            var scrollTop = this.$refs.main.scrollTop;
             if(scrollTop+30<=350){
                 this.flag=false
             }else{
@@ -121,7 +128,11 @@ export default {
             this.showMask=false
         },
         getAddress(){
-           this.addressFlag=true;
+            this.addressFlag=true;
+        },
+        //跳转type页面
+        jumpType(){
+            this.$router.push({name:'type',query:{curId:localStorage.getItem('carId')}})
         }
     }
 }
@@ -233,6 +244,8 @@ export default {
                     text-align: right;
                 }
                 .city{
+                    flex:1;
+                    text-align: right;
                     &:after{
                         content: "";
                         display: inline-block;
@@ -265,6 +278,36 @@ export default {
     }
     .dealer-info{
         ul{
+            li:before {
+                content: "";
+                display: inline-block;
+                width: 0.32rem;
+                height: 0.32rem;
+                border-radius: 50%;
+                border: 2px solid #ccc;
+                box-sizing: border-box;
+                position: absolute;
+                left: 0.12rem;
+                top: 50%;
+                transform: translate3d(0, -50%, 0);
+            }
+            li.active:before {
+                background: #3aacff;
+                border: none;
+            }
+            li:after {
+                content: "";
+                display: inline-block;
+                padding-top: 0.17rem;
+                padding-right: 0.1rem;
+                border: 2px solid #fff;
+                transform: rotate(40deg) translate3d(0, -50%, 0);
+                position: absolute;
+                left: 0.12rem;
+                border-left: none;
+                border-top: none;
+                top: 47%;
+            }
             li{
                 height:82px;
                 display: flex;
@@ -273,30 +316,22 @@ export default {
                 padding: 10px 10px 20px 40px;
                 border-bottom: 1px solid #eee;
                 position: relative;
-                &:before{
-                    content: "";
-                    display: inline-block;
-                    width: .32rem;
-                    height: .32rem;
-                    border-radius: 50%;
-                    border: 2px solid #ccc;
-                    box-sizing: border-box;
-                    position: absolute;
-                    left:10px;
-                    top: 46%;
-                    -webkit-transform: translate3d(0,-50%,0);
-                    transform: translate3d(0,-50%,0);
-                }
                 p{
                     flex:1;
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
+                    span{
+                        &:first-child{
+                            width:230px;
+                        }
+                    }
                     .color{
                         color:crimson;
+                        font-size: 12px;
                     }
                     &:last-child{
-                        font-size: 14px;
+                        font-size: 12px;
                         color:#ccc;
                     }
                 }

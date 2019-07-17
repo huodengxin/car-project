@@ -1,7 +1,7 @@
 <template>
   <div class="quotationList">
       <ul>
-        <li class="" v-for="(item, index) in list" :key="index">
+        <li :class="{'active':item.addActive}" v-for="(item, index) in list" :key="index" @click='changeActive(index)'>
             <p>
                 <span>{{item.dealerShortName}}</span>
                 <span class="color">{{item.price}}万</span>
@@ -15,13 +15,22 @@
   </div>
 </template>
 <script>
+import {mapMutations} from 'vuex'
 export default {
     data(){
         return {
 
         }
     },
-    props:['list']
+    props:['list'],
+    methods:{
+      ...mapMutations({
+          changeActiveMu:'quotation/changeActiveMu'
+      }),
+      changeActive(ind){
+          this.changeActiveMu(ind)
+      }
+    }
 }
 </script>
 <style lang="scss" scope>

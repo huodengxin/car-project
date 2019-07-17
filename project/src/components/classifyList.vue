@@ -32,6 +32,7 @@ export default {
   },
   methods: {
     jump(carId){
+      localStorage.setItem('carId',carId)
       this.$router.push({name:'quotation',params:{carId}})
     }
   },

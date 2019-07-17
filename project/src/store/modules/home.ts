@@ -34,18 +34,16 @@ const getters = {
 }
 //异步
 const actions={
-   dataActions({commit}: {commit: Function}){
-      homeFn().then((res:any)=>{
-          commit('dataMu',res.data)
-      })
+   async dataActions({commit}: {commit: Function}){
+      let data:any=await homeFn()
+      state.slideList=codeFn(data.data)
+      state.homeData=mapData(data.data,state.slideList)
+      return data
    }
 }
 //同步
 const mutations={
-   dataMu(state: any,data:Array<Object>){
-      state.slideList=codeFn(data)
-      state.homeData=mapData(data,state.slideList)
-   }
+  
 }
 
 
