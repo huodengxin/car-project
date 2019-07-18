@@ -22,6 +22,7 @@
         <li>#</li>
         <li v-for="(item,index) in slideList" :key="item" @click='scrollto(index)'>{{item}}</li>
       </ul>
+      <Loading v-show="isLoading"/>
   </div>
 </template>
 
@@ -30,16 +31,20 @@
 import {mapActions, mapState} from 'vuex'
 import BScroll from 'better-scroll'
 import Drawer from "../components/Drawer"
+import Loading from "../components/Loading"
+
 
 export default {
   name: 'home',
   data(){
     return {
-      flag:false
+      flag:false,
+      isLoading: true
     }
   },
   components: {
-    Drawer
+    Drawer,
+    Loading
   },
   computed: {
     ...mapState({
@@ -47,8 +52,11 @@ export default {
       homeData:state=>state.home.homeData
     })
   },
-  created() {
-    this.dataActions()
+  async created() {
+    let data=await this.dataActions();
+    if(data.code==1){
+      this.isLoading=false
+    }
   },
   mounted() {
       this.bs=new BScroll(this.$refs.main,{

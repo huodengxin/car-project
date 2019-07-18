@@ -17,11 +17,11 @@
                 <ul>
                     <li>
                         <span>姓名</span>
-                        <input type="text" maxlength='4' placeholder="输入你的真实中文姓名">
+                        <input type="text" maxlength='4' placeholder="输入你的真实中文姓名" v-model="user">
                     </li>
                      <li>
                         <span>手机</span>
-                        <input type="text" placeholder="输入你的真实手机号码" maxlength='11'>
+                        <input type="text" placeholder="输入你的真实手机号码" maxlength='11' v-model="iphone">
                     </li>
                      <li>
                         <span>城市</span>
@@ -46,37 +46,48 @@
             </button>
         </footer>
         <my-City v-show="addressFlag" :addressArr='addressList' :carId='$route.query.carId'/>
-        <my-Mask v-show="showMask" @emitMack='emitshowMask'/>
-        <Loading v-show="isLoading"/>
+        <my-Mask v-show="showMask" @emitMack='emitshowMask'>
+            <p>{{text}}</p>
+        </my-Mask>
+        <Loading v-show="isLoading" />
+        <mySuccess v-show="successFlag" @successEmit='successEmitFn'/>
     </div>
 </template>
 <script>
 import myMask from '../components/Mask'
 import myCity from '../components/City'
+import mySuccess from '../components/Success'
 import QuotationList from '../components/QuotationList'
 import Loading from '@/components/Loading'
 import {mapActions,mapState,mapMutations} from 'vuex'
 export default {
     data(){
         return {
+            text:'请输入真实的中文姓名',
             flag:false,
             showMask:false,
             addressFlag:false,
-            isLoading: true
+            isLoading: true,
+            successFlag:false,
+            user:'',
+            iphone:''
         }
     },
     components:{
         myMask,
         QuotationList,
         myCity,
-        Loading
+        Loading,
+        mySuccess
     },
     computed:{
         ...mapState({
             quotationData:state=>state.quotation.quotationData,
             cityId:state=>state.quotation.cityId,
             addressList:state=>state.quotation.addressList,
-            CityName:state=>state.quotation.CityName
+            CityName:state=>state.quotation.CityName,
+            locationId:state=>state.quotation.locationId,
+            dealerIdStr:state=>state.quotation.dealerIdStr
         })
     },
     async created(){
@@ -108,7 +119,8 @@ export default {
     methods:{
          ...mapActions({
              dataActions:'quotation/dataActions',
-             addressActions:'quotation/addressActions'
+             addressActions:'quotation/addressActions',
+             submitActions:'quotation/submitActions'
          }),
         ...mapMutations({
             cityMu:'quotation/cityMu'
@@ -121,8 +133,34 @@ export default {
                 this.flag=true
             }
         },
-        clickMask(){
-            this.showMask=true
+        async clickMask(){
+            //姓名 手机号验证
+           var phoneReg = /(^1[3|4|5|7|8|9]\d{9}$)|(^09\d{8}$)/;
+           var nameReg = /^[\u4E00-\u9FA5]{2,4}$/;
+           if (!nameReg.test(this.user)||!phoneReg.test(this.iphone)) {
+              this.showMask=true
+           }else{
+               if(this.quotationData[0].list.length==0){
+                   this.text='请先选择报价经销商';
+                   this.showMask=true;
+                   return 
+               }
+              let data=await this.submitActions({
+                   carid:localStorage.getItem('carId'),
+                   mobile:this.iphone,
+                   dealerids:this.dealerIdStr,
+                   location:this.CityName,
+                   carname:`${this.quotationData[0].details.market_attribute.year}${this.quotationData[0].details.car_name}`,
+                   locationid:this.locationId,
+                   name:this.user
+               })
+               if(data.code==1){
+                   this.successFlag=true
+               }
+           }
+        },
+        successEmitFn(){
+            this.successFlag=false
         },
         emitshowMask(){
             this.showMask=false

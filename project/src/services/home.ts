@@ -47,3 +47,12 @@ export function addressConFn(params: any): Promise<Object> {
         params
     })
 }
+
+//询最低价提交
+export function submitFn(params: any): Promise<Object> {
+    return request({
+        url: "/h2-submit-lowprice.html",
+        method: 'GET',
+        params
+    })
+}

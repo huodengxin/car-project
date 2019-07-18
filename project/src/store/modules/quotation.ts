@@ -1,4 +1,4 @@
-import { quotationFn, cityFn, addressFn, addressConFn } from '../../services'
+import { quotationFn, cityFn, addressFn, addressConFn,submitFn } from '../../services'
 
 
 const state = {
@@ -10,7 +10,8 @@ const state = {
   //定位地址
   location: '',
   //定位地址id
-  locationId: ''
+  locationId: '',
+  dealerIdStr:""
 }
 
 const getters = {
@@ -29,6 +30,7 @@ const actions={
    //询低价
    async dataActions({commit}:{commit:Function},params:Object){
        let res:any=await quotationFn(params);
+       let dealerIdArr:any=[];
        res.data.list=res.data.list.map((item:any,index:any)=>{
          item.price=item.vendorPrice.slice(0,item.vendorPrice.indexOf('.')+1);
          if(index<3){
@@ -36,9 +38,15 @@ const actions={
          }else{
             item.addActive=false
          }
+         if(item.addActive){
+            dealerIdArr.push(item.dealerId)
+         }
          return item
       })
-      state.quotationData=[res.data]
+      let arr:any=[];
+      arr.push(res.data)
+      state.quotationData=arr;
+      state.dealerIdStr=dealerIdArr.join(',');
       return res
    },
    //获取地址
@@ -53,12 +61,14 @@ const actions={
       commit('addressConMu',res.data)
       })
    },
+   //提交 询最低价
+   async submitActions({commit}:{commit:Function},payload:any){
+      let data=await submitFn(payload)
+     return data
+   },
 }
 //同步
 const mutations={
-   dataMu(state:any,data:any){
-      // state.quotationData=[data]
-   },
    cityMu(state:any,obj:any){
     state.cityId=obj.CityID;
     state.CityName=obj.CityName

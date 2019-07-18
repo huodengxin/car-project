@@ -1,11 +1,16 @@
 <template>
   <div class="mask">
     <div>
-      <p>请输入真实的中文姓名</p>
+      <slot></slot>
       <p @click="$emit('emitMack')">好</p>
     </div>
   </div>
 </template>
+<script>
+export default {
+  
+}
+</script>
 <style lang="scss" scope>
 .mask {
   position: fixed;
