@@ -1,4 +1,4 @@
-import { imgFn, colorFn, fnImg } from "../../services"
+import { imgFn, colorFn, fnImg, changeImg } from "../../services"
 function imgDataFn(arr: Array<Object>) {
     arr.map((item: any) => {
         item.List.map((val: any) => {
@@ -7,9 +7,17 @@ function imgDataFn(arr: Array<Object>) {
     })
     return arr
 }
+function imgChanges(arr: Array<Object>) {
+    arr.map((item: any) => {
+        item.Url = item.Url.replace("{0}", "3")
+    })
+    return arr
+}
 const state = {
     imgList: [] = [],
     colorList: {},
+    imgNewList: [] = [],
+    Count: ""
 }
 const actions = {
     imgActions({ commit }: { commit: Function }, params: any) {
@@ -26,6 +34,11 @@ const actions = {
         fnImg(params).then((res: any) => {
             commit("imgcarMua", res.data)
         })
+    },
+    changeImgs({ commit }: { commit: Function }, params: any) {
+        changeImg(params).then((res: any) => {
+            commit("changeimgMua", res.data)
+        })
     }
 }
 const mutations = {
@@ -37,7 +50,11 @@ const mutations = {
     },
     imgcarMua(state: any, data: any) {
         state.imgList = imgDataFn(data)
-        console.log('......',state.imgList)
+    },
+    changeimgMua(state: any, data: any) {
+        console.log("data...", data)
+        state.imgNewList = imgChanges(data.List)
+        state.Count = data.Count
     }
 }
 export default {

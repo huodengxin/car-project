@@ -52,21 +52,21 @@ const state = {
     newList: [] = [],
     titleList: [] = []
 }
-const actions={
-    async carActions({commit}:{commit:Function},payLoad:string){
-        let res:any=await carFn(payLoad)
-        state.obj=res.data;
-        state.yearArr=arrFn(res.data.list);
-        state.list=res.data.list;
-        state.newList=titleFn(res.data.list);
-        state.dealer_price=res.data.market_attribute.dealer_price;
-        state.official_refer_price=res.data.market_attribute.official_refer_price;
+const actions = {
+    async carActions({ commit }: { commit: Function }, payLoad: string) {
+        let res: any = await carFn(payLoad)
+        state.obj = res.data;
+        state.yearArr = arrFn(res.data.list);
+        state.list = res.data.list;
+        state.newList = titleFn(res.data.list);
+        state.dealer_price = res.data.market_attribute.dealer_price;
+        state.official_refer_price = res.data.market_attribute.official_refer_price;
         return res
     }
 }
-const mutations={
-    changeYear(state: any,item:string){
-        state.newList=titleFn(listArr(state.list,item))
+const mutations = {
+    changeYear(state: any, item: string) {
+        state.newList = titleFn(listArr(state.list, item))
     }
 }
 export default {
