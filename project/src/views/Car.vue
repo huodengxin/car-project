@@ -3,6 +3,7 @@
     <div class="content">
       <div class="img" @click="gotoImg(obj.SerialID)">
         <img :src="obj.CoverPhoto" alt>
+        <!-- <img src :style="{backgroundImage:'url('+obj.CoverPhoto+')'}"> -->
         <p class="count">{{obj.pic_group_count}}张照片</p>
       </div>
       <div class="info">
@@ -28,7 +29,7 @@
 import { mapState, mapActions } from "vuex";
 import classifyYear from "@/components/classifyYear";
 import classifyList from "@/components/classifyList";
-import Loading from '@/components/Loading'
+import Loading from "@/components/Loading";
 export default {
   props: {},
   components: {
@@ -43,10 +44,10 @@ export default {
   },
   computed: {
     ...mapState({
-        obj: state => state.car.obj,
-        dealer_price: state => state.car.dealer_price,
-        official_refer_price: state => state.car.official_refer_price,
-        newList: state => state.car.newList
+      obj: state => state.car.obj,
+      dealer_price: state => state.car.dealer_price,
+      official_refer_price: state => state.car.official_refer_price,
+      newList: state => state.car.newList
     })
   },
   methods: {
@@ -55,9 +56,12 @@ export default {
       cityActions: "quotation/cityActions",
       imgActions: "myImg/imgActions"
     }),
-    jump(){
-       localStorage.setItem('carId',this.newList[0].list[0].car_id)
-      this.$router.push({name:'quotation',params:{carId:this.newList[0].list[0].car_id}})
+    jump() {
+      localStorage.setItem("carId", this.newList[0].list[0].car_id);
+      this.$router.push({
+        name: "quotation",
+        params: { carId: this.newList[0].list[0].car_id }
+      });
     },
     gotoImg(SerialID) {
       this.$router.push({ name: "MyImg", params: { SerialID } });
@@ -65,10 +69,10 @@ export default {
     }
   },
   async created() {
-    let data=await this.carActions(this.$route.params.id);
-    if(data.code==1){
-      this.isLoading=false;
-      this.cityActions()
+    let data = await this.carActions(this.$route.params.id);
+    if (data.code == 1) {
+      this.isLoading = false;
+      this.cityActions();
     }
   },
   mounted() {}

@@ -24,7 +24,6 @@ const actions = {
     },
     ColorCar({ commit }: { commit: Function }, params: any) {
         fnImg(params).then((res: any) => {
-            console.log(res.data)
             commit("imgcarMua", res.data)
         })
     }
@@ -38,6 +37,7 @@ const mutations = {
     },
     imgcarMua(state: any, data: any) {
         state.imgList = imgDataFn(data)
+        console.log('......',state.imgList)
     }
 }
 export default {

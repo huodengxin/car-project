@@ -2,10 +2,10 @@
   <div class="car-img">
     <div class="tit">
       <p>
-        <span @click="gotoMyColor">颜色</span>
+        <span @click="gotoMyColor">{{this.title}}</span>
       </p>
       <p>
-        <span>车款</span>
+        <span @click="gotoType">车款</span>
       </p>
     </div>
     <ul class="imgBox" v-for="(item,index) in imgList" :key="index">
@@ -17,6 +17,9 @@
         </div>
       </li>
     </ul>
+    <div v-if="!imgList.length">
+      <p>还没有内容</p>
+    </div>
   </div>
 </template>
 <script>
@@ -25,7 +28,9 @@ export default {
   props: {},
   components: {},
   data() {
-    return {};
+    return {
+      title: ""
+    };
   },
   computed: {
     ...mapState({
@@ -37,9 +42,14 @@ export default {
     gotoMyColor() {
       let SerialID = this.$route.params.SerialID;
       this.$router.push({ name: "myColor", params: { SerialID } });
+    },
+    gotoType() {
+      this.$router.push({ name: "type" });
     }
   },
-  created() {},
+  created() {
+    this.title = this.$route.params.title || "颜色";
+  },
   mounted() {}
 };
 </script>

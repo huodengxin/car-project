@@ -1,6 +1,6 @@
 <template>
   <div class="color">
-    <p class="title">全部颜色</p>
+    <p class="title" @click="gotoImg">全部颜色</p>
     <div class="box">
       <p>
         <span
@@ -11,7 +11,7 @@
         >{{key}}</span>
       </p>
       <ul class="list">
-        <li v-for="(item,index) in arr" :key="index" @click="gotoImgCar(item.ColorId)">
+        <li v-for="(item,index) in arr" :key="index" @click="gotoImgCar(item.ColorId,item.Name)">
           <span :style="{backgroundColor:item.Value}"></span>
           {{item.Name}}
         </li>
@@ -27,7 +27,8 @@ export default {
   data() {
     return {
       ind: 0,
-      arr: []
+      arr: [],
+      SerialID: ""
     };
   },
   computed: {
@@ -38,22 +39,34 @@ export default {
   methods: {
     ...mapActions({
       colorActions: "myImg/colorActions",
-      ColorCar: "myImg/ColorCar"
+      ColorCar: "myImg/ColorCar",
+      imgActions: "myImg/imgActions"
     }),
     change(ind, key) {
       this.ind = ind;
       this.arr = this.colorList[key];
     },
-    gotoImgCar(ColorId) {
+    gotoImgCar(ColorID, Name) {
       this.ColorCar({
-        SerialID: this.$route.params.SerialID,
-        ColorId,
-        _1563366250444: null
+        SerialID: this.SerialID,
+        ColorID
       });
+      this.$router.push({
+        name: "MyImg",
+        params: { SerialID: this.SerialID, title: Name }
+      });
+    },
+    gotoImg() {
+      this.$router.push({
+        name: "MyImg",
+        params: { SerialID: this.SerialID, title: "全部颜色" }
+      });
+      this.imgActions(this.SerialID);
     }
   },
   created() {
-    this.colorActions(this.$route.params.SerialID);
+    this.SerialID = this.$route.params.SerialID;
+    this.colorActions(this.SerialID);
   },
   mounted() {}
 };
