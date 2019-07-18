@@ -9,7 +9,7 @@
                 <div class="dlList">
                     <dl v-for="(el) in item.list" :key="el.Spelling" @click="gotoD(el.MasterID)">
                       <dt>
-                        <img :src="el.CoverPhoto" alt="">
+                        <img src="/loading.gif" :data-src='el.CoverPhoto' alt="" ref='img'>
                       </dt>
                       <dd>{{el.Name}}</dd>
                     </dl>
@@ -32,8 +32,8 @@ import {mapActions, mapState} from 'vuex'
 import BScroll from 'better-scroll'
 import Drawer from "../components/Drawer"
 import Loading from "../components/Loading"
-
-
+import LazyLoad from '../utils/lazyLoad.js'
+import imitationShake from '../utils/optimization.js'
 export default {
   name: 'home',
   data(){
@@ -55,13 +55,17 @@ export default {
   async created() {
     let data=await this.dataActions();
     if(data.code==1){
-      this.isLoading=false
+      this.isLoading=false;
+      new LazyLoad(this.$refs.img)
     }
   },
   mounted() {
       this.bs=new BScroll(this.$refs.main,{
             probeType:3,
             click:true
+      }),
+      this.bs.on('scroll',pos=>{
+         imitationShake(()=>{new LazyLoad(this.$refs.img,pos.y)})()
       })
   },
   methods: {
