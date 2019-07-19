@@ -22,7 +22,8 @@
         <li>#</li>
         <li v-for="(item,index) in slideList" :key="item" @click='scrollto(index)'>{{item}}</li>
       </ul>
-      <Loading v-show="isLoading"/>
+      <!-- <Loading v-show="isLoading"/> -->
+      <img src="/骨架图.jpg" alt="" v-show="jpgFlag" class='jpg'>
   </div>
 </template>
 
@@ -39,7 +40,8 @@ export default {
   data() {
     return {
       flag:false,
-      isLoading: true
+      isLoading: true,
+      jpgFlag:true
     }
   },
   components: {
@@ -55,7 +57,8 @@ export default {
   async created() {
     let data=await this.dataActions();
     if(data.code==1){
-      this.isLoading=false;
+      // this.isLoading=false;
+      this.jpgFlag=false;
       new LazyLoad(this.$refs.img)
     }
   },
@@ -92,11 +95,19 @@ export default {
   width: 100%;
   height: 100%;
   position: relative;
+  >.jpg{
+    width:100%;
+    height:100%;
+    position: absolute;
+    top:0;
+    left:0;
+    z-index: 9999;
+  }
   main {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    > div {
+    >div {
       h4 {
         width: 100%;
         height: 30px;
@@ -126,23 +137,23 @@ export default {
     }
   }
 }
-@keyframes draw {
-  from {
-    right: -70%;
-  }
-  to {
-    right: 0%;
-  }
-}
+
 .drawer-box {
-  position: fixed;
-  top: 0;
-  right: -70%;
-  z-index: 9999;
-  &.active {
-    animation: draw 1s forwards;
-  }
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 0;
+    transition: all .2s ease;
+    background: #fff;
+    z-index: 100;
+    height: 100%;
+    box-shadow: 0 0 0.5rem #eee;
+    &.active{
+        width: 75%;
+    }
 }
+
+
 
 .fixed {
   width: 20px;
